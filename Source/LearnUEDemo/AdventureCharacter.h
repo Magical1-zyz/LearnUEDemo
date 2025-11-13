@@ -1,14 +1,16 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Camera/CameraComponent.h"
 #include "GameFramework/Character.h"
 #include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
+#include "EnhancedInputSubsystems.h" 
 #include "InputActionValue.h"
 #include "AdventureCharacter.generated.h"
 
+class UAnimBlueprint;
 class UInputMappingContext;
 class UInputAction;
 class UInputComponent;
@@ -21,6 +23,10 @@ class LEARNUEDEMO_API AAdventureCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AAdventureCharacter();
+
+    // First Person animations
+    UPROPERTY(EditAnywhere, Category = "Animation")
+	TObjectPtr<UAnimBlueprint> FirstPersonDefaultAnim;
 
 protected:
 	// Called when the game starts or when spawned
@@ -37,7 +43,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> JumpAction;
 
-public:	
+	// Look Input Action
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
+	TObjectPtr<UInputAction> LookAction;
+
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -47,4 +57,28 @@ public:
 	// Handles 2D Movement Input
 	UFUNCTION()
 	void Move(const FInputActionValue& Value);
+
+	// Handles Look Input
+	UFUNCTION()
+	void Look(const FInputActionValue& Value);
+
+	// First Person camera
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	TObjectPtr<UCameraComponent> FirstPersonCameraComponent;
+
+	// Offset for the first-person camera
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	FVector FirstPersonCameraOffset = FVector(2.8f, 5.9f, 0.0f);
+
+	// First-person camera field of view
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	float FirstPersonFieldOfView = 70.0f;
+
+	// First-person camera view scale
+	UPROPERTY(EditAnywhere, Category = "Camera")
+	float FirstPersonScale = 0.6f;
+
+	// First-person mesh, visible only to the owning player
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	TObjectPtr<USkeletalMeshComponent> FirstPersonMeshComponent;
 };
